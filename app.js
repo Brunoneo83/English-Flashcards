@@ -86,6 +86,76 @@ function speak(text) {
   window.speechSynthesis.speak(utt);
 }
 
+function launchFireworks() {
+  const canvas = document.getElementById('fireworks-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.display = 'block';
+
+  // Union Jack colours
+  const colors = ['#C8102E', '#FFFFFF', '#012169', '#C8102E', '#FFFFFF'];
+  const bursts = [];
+
+  for (let b = 0; b < 9; b++) {
+    setTimeout(() => {
+      const particles = [];
+      const x = canvas.width * (0.1 + Math.random() * 0.8);
+      const y = canvas.height * (0.08 + Math.random() * 0.55);
+      const col1 = colors[Math.floor(Math.random() * colors.length)];
+      const col2 = colors[Math.floor(Math.random() * colors.length)];
+      const count = 90;
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 / count) * i;
+        const speed = 3.5 + Math.random() * 5;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 1.5,
+          color: i % 2 === 0 ? col1 : col2,
+          alpha: 1,
+          radius: 2 + Math.random() * 2.5,
+          decay: 0.012 + Math.random() * 0.01
+        });
+      }
+      bursts.push(particles);
+    }, b * 200);
+  }
+
+  const end = performance.now() + 2800;
+
+  function animate(now) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    bursts.forEach(particles => {
+      particles.forEach(p => {
+        if (p.alpha <= 0) return;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.09;
+        p.vx *= 0.98;
+        p.alpha -= p.decay;
+        if (p.alpha < 0) p.alpha = 0;
+        else alive = true;
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    });
+    ctx.globalAlpha = 1;
+    if (now < end || alive) {
+      requestAnimationFrame(animate);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.style.display = 'none';
+    }
+  }
+
+  requestAnimationFrame(animate);
+}
+
 function showCongrats() {
   const el = document.getElementById('congrats');
   el.hidden = false;
@@ -110,6 +180,7 @@ function advance() {
     }
     currentState = 1;
     saveState();
+    if (currentIndex > 0 && currentIndex % 20 === 0) launchFireworks();
     render(false);
   }
 }
