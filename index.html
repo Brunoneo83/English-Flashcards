@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>English Flashcards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="progress">Word <span id="progress-num">1</span> / 500</div>
+
+  <main id="main-area">
+    <div id="card">
+      <div id="word"></div>
+      <div id="dots">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+      <div id="french"></div>
+      <div id="example"></div>
+    </div>
+  </main>
+
+  <button id="back-btn" disabled>← Back</button>
+
+  <div id="congrats" hidden>
+    <p>You've completed all 500 words! 🎉</p>
+    <p>Starting over…</p>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
