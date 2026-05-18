@@ -199,7 +199,7 @@ function goBack() {
 }
 
 async function init() {
-  const res = await fetch('./english_vocabulary_500.json');
+  const res = await fetch('./toeic_vocabulary_full.json');
   const data = await res.json();
   vocab = data.words;
 
