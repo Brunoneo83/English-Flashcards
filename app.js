@@ -30,16 +30,26 @@ function newRound() {
 }
 
 function loadState() {
-  const rawOrder = localStorage.getItem(KEY_ORDER);
-  const rawIndex = localStorage.getItem(KEY_INDEX);
-  const rawState = localStorage.getItem(KEY_STATE);
-  if (rawOrder && rawIndex !== null && rawState !== null) {
-    shuffledOrder = JSON.parse(rawOrder);
-    currentIndex = parseInt(rawIndex, 10);
-    currentState = parseInt(rawState, 10);
+  try {
+    const rawOrder = localStorage.getItem(KEY_ORDER);
+    const rawIndex = localStorage.getItem(KEY_INDEX);
+    const rawState = localStorage.getItem(KEY_STATE);
+    if (!rawOrder || rawIndex === null || rawState === null) return false;
+    const order = JSON.parse(rawOrder);
+    const index = parseInt(rawIndex, 10);
+    const state = parseInt(rawState, 10);
+    if (
+      !Array.isArray(order) || order.length !== vocab.length ||
+      isNaN(index) || index < 0 || index >= vocab.length ||
+      isNaN(state) || state < 1 || state > 5
+    ) return false;
+    shuffledOrder = order;
+    currentIndex = index;
+    currentState = state;
     return true;
+  } catch (e) {
+    return false;
   }
-  return false;
 }
 
 function currentWord() {
@@ -52,11 +62,17 @@ function setReveal(el, text, show, animate) {
     if (animate) {
       requestAnimationFrame(() => el.classList.add('visible'));
     } else {
+      el.style.transition = 'none';
       el.classList.add('visible');
+      el.offsetHeight;
+      el.style.transition = '';
     }
   } else {
+    el.style.transition = 'none';
     el.classList.remove('visible');
     el.textContent = '';
+    el.offsetHeight;
+    el.style.transition = '';
   }
 }
 
@@ -68,6 +84,7 @@ function render(animate = true) {
 
   setReveal(document.getElementById('french'), word.french, currentState >= 3, animate);
   setReveal(document.getElementById('example'), word.example, currentState >= 4, animate);
+  setReveal(document.getElementById('french-example'), word.example_fr, currentState >= 5, animate);
 
   document.querySelectorAll('.dot').forEach((dot, i) => {
     dot.classList.toggle('active', i < currentState);
@@ -167,7 +184,7 @@ function showCongrats() {
 }
 
 function advance() {
-  if (currentState < 4) {
+  if (currentState < 5) {
     currentState++;
     if (currentState === 2) speak(currentWord().word);
     saveState();
@@ -202,6 +219,9 @@ async function init() {
   const res = await fetch('./toeic_vocabulary_full.json');
   const data = await res.json();
   vocab = data.words;
+
+  document.getElementById('total-num').textContent = vocab.length;
+  document.getElementById('congrats-total').textContent = vocab.length;
 
   if (!loadState()) {
     newRound();

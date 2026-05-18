@@ -11,7 +11,7 @@
 </head>
 <body>
 
-  <div id="progress">Word <span id="progress-num">1</span> / 500</div>
+  <div id="progress">Word <span id="progress-num">1</span> / <span id="total-num">500</span></div>
 
   <main id="main-area">
     <div id="card">
@@ -21,9 +21,11 @@
         <span class="dot"></span>
         <span class="dot"></span>
         <span class="dot"></span>
+        <span class="dot"></span>
       </div>
       <div id="french"></div>
       <div id="example"></div>
+      <div id="french-example"></div>
     </div>
   </main>
 
@@ -32,7 +34,7 @@
   <canvas id="fireworks-canvas"></canvas>
 
   <div id="congrats" hidden>
-    <p>You've completed all 500 words! 🎉</p>
+    <p>You've completed all <span id="congrats-total">500</span> words! 🎉</p>
     <p>Starting over…</p>
   </div>
 
